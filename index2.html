@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hành Trình Của Rồng Con - Khám Phá Miền Tây</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=Lora:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --background-color: #fbf5e9; /* Giấy cũ sáng nhất */
+            --primary-text: #4E443A;
+            --secondary-text: #6D6359;
+            --card-border: #E0DCD7;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --stat-card-bg: rgba(240, 244, 243, 0.85);
+            --accent-color: #00796B;
+            --dark-background: #1a1a1a;
+            --path-color: #5D4037; /* Nâu sẫm */
+            --vignette-color: #d8c6a3;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--background-color);
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.15' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"),
+                radial-gradient(ellipse at center, var(--background-color) 0%, var(--vignette-color) 100%);
+            background-attachment: fixed;
+            background-position: center center;
+            background-size: auto, cover;
+            color: var(--primary-text);
+            font-weight: 400;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Keyframes */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounceArrow { 0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); } 40% { transform: translate(-50%, -15px); } 60% { transform: translate(-50%, -7px); } }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 70% { opacity: 1; transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes pulseDot {
+            0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(93, 64, 55, 0.4); }
+            70% { transform: translate(-50%, -50%) scale(1.2); box-shadow: 0 0 0 10px rgba(93, 64, 55, 0); }
+            100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(93, 64, 55, 0); }
+        }
+
+        /* --- Intro "LUNAR" Style (Giữ nguyên) --- */
+        #landing { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; background-color: var(--dark-background); z-index: 10; }
+        #landing h1, #landing h2, #landing p { color: var(--background-color); }
+        #landing .text-lg { color: var(--background-color); opacity: 0.8; }
+        #landing .text-2xl { color: var(--background-color); }
+        #landing .scroll-down-arrow { color: var(--background-color); opacity: 0.6; }
+        .landing-content { }
+        .landing-logo-brand, .landing-content > img, .landing-content > h1, .landing-content > p, .scroll-down-arrow { opacity: 0; animation-fill-mode: forwards; animation-timing-function: ease-out; }
+        .landing-logo-brand { animation: fadeIn 1.2s 0.5s forwards; }
+        .landing-content > img { animation: popIn 0.8s 1.0s forwards; }
+        .landing-content > h1 { animation: fadeIn 1.2s 1.8s forwards; }
+        .landing-content > p, .scroll-down-arrow { animation: fadeIn 1.2s 2.2s forwards; }
+
+        /* --- Bộ cục "TIMELINE" Gần Hơn --- */
+        #provinces-container { position: relative; z-index: 5; }
+        .timeline-container { position: relative; max-width: 1000px; margin: 0 auto; padding: 6rem 1rem; }
+
+        /* THAY ĐỔI: Container cho SVG đường vẽ */
+        #timeline-drawing-path-container {
+            position: absolute;
+            top: 0;
+            /* Căn giữa theo chiều ngang */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px; /* Chiều rộng không quan trọng */
+            height: 100%; /* Cao bằng container */
+            z-index: 1; /* Nằm dưới item */
+            pointer-events: none;
+        }
+        #timeline-drawing-path-svg {
+            display: block;
+            height: 100%;
+            width: 10px; /* Chiều rộng không quan trọng */
+            overflow: visible; /* Cho phép path vẽ ra ngoài */
+        }
+        #drawing-path {
+            fill: none;
+            stroke: var(--path-color); /* Màu nâu sẫm */
+            stroke-width: 4;
+            stroke-dasharray: 1; /* Nét đứt, JS sẽ cập nhật giá trị này */
+            stroke-dashoffset: 1; /* Độ dịch chuyển, JS sẽ cập nhật */
+            stroke-linecap: round;
+        }
+
+        .timeline-item { padding: 10rem 0; position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        .timeline-content { padding: 0; opacity: 1; transform: none; transition: none; } /* Container vô hình */
+
+        /* Khối chứa text */
+        .timeline-text-content {
+             background-color: var(--card-bg); border-radius: 1rem; padding: 2rem;
+             border: 1px solid var(--card-border); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+             opacity: 0; transform: translateY(30px);
+             transition: opacity 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+         .timeline-text-content.is-visible { opacity: 1; transform: translateY(0); }
+
+        /* Animation nối tiếp */
+        .timeline-text-content h2, .timeline-text-content .stats-container { opacity: 0; transform: translateY(20px); transition: opacity 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .timeline-text-content.is-visible h2 { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+        .timeline-text-content.is-visible .stats-container { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
+         .timeline-visual.is-visible .province-image { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s, scale 0.3s ease; }
+
+        .timeline-text-content h2 { margin-bottom: 1.5rem; text-align: center; }
+        .timeline-item-left .timeline-text-content { grid-column: 1; grid-row: 1; }
+        .timeline-item-left .timeline-visual { grid-column: 2; grid-row: 1; }
+        .timeline-item-right .timeline-text-content { grid-column: 2; grid-row: 1; }
+        .timeline-item-right .timeline-visual { grid-column: 1; grid-row: 1; }
+
+        /* Chấm tròn */
+        .timeline-item::after {
+            content: ''; position: absolute; width: 22px; height: 22px; border-radius: 50%;
+            background-color: var(--background-color); /* Nền trùng màu body */
+            border: 5px solid var(--path-color);
+            top: 50%; left: 50%; z-index: 4;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s;
+        }
+        .timeline-item.dot-visible::after {
+             transform: translate(-50%, -50%) scale(1);
+             animation: pulseDot 2s infinite ease-in-out 1s;
+        }
+
+        /* Container ảnh */
+        .timeline-visual { background-color: transparent; border: none; box-shadow: none; padding: 0; opacity: 1; transform: none; transition: none; }
+        .province-image { width: 100%; height: auto; object-fit: cover; border-radius: 1rem; display: block; box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.15); will-change: transform; border: 4px solid white; opacity: 0; transform: translateY(30px); }
+        .province-image:hover { transform: scale(1.05); }
+        #haugiang .province-image { transform: none; width: 100%; }
+
+        /* Stats (Giữ nguyên) */
+        .stats-container { display: flex; gap: 1rem; width: 100%; }
+        .stat-card { background-color: var(--stat-card-bg); border-radius: 0.75rem; padding: 1rem; text-align: center; flex: 1; border: none; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07); }
+        .stat-number { font-size: 1.5rem; font-weight: 700; color: var(--accent-color); font-family: 'Nunito Sans', sans-serif; }
+        .stat-label { font-size: 0.875rem; color: var(--secondary-text); margin-top: 0.25rem; font-weight: 600; }
+        @keyframes slideUpNumber { 0% { opacity: 0; transform: translateY(30px); } 50% { opacity: 0.7; transform: translateY(-5px); } 100% { opacity: 1; transform: translateY(0); } }
+        .stat-number.mobile-animate { opacity: 0; animation: slideUpNumber 1s ease-out forwards; }
+        .stat-number.mobile-animate.delay-1 { animation-delay: 0.2s; }
+        .stat-number.mobile-animate.delay-2 { animation-delay: 0.4s; }
+        .stat-number.mobile-animate.delay-3 { animation-delay: 0.6s; }
+
+        /* --- Mascot (Giữ nguyên) --- */
+        #mascot-container { position: fixed; z-index: 100; width: clamp(240px, 35vw, 340px); height: clamp(240px, 35vw, 340px); pointer-events: none; bottom: 2rem; opacity: 0; transform-origin: bottom center; filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.25)); }
+        #mascot-container.position-left { left: 1.5rem; }
+        #mascot-container.position-right { right: 1.5rem; }
+        #mascot-container.visible { opacity: 1; animation: popIn 0.5s ease-out forwards; }
+        #mascot-container #mascot-img { width: 100%; height: 100%; object-fit: contain; }
+        #dialog-box { position: absolute; background-color: var(--card-bg); color: var(--primary-text); padding: 1rem 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border: 1px solid var(--card-border); font-weight: 600; line-height: 1.6; width: clamp(250px, 50vw, 340px); pointer-events: auto; bottom: 10rem; opacity: 0; transform: translateY(0); transition: opacity 0.4s ease-out 0.5s, transform 0.4s ease-out 0.5s; }
+        #dialog-box.visible { opacity: 1; transform: translateY(-10px); }
+        #dialog-box::after { content: ''; position: absolute; border-width: 12px; border-style: solid; bottom: 1.5rem; }
+        #dialog-box.dialog-from-left { left: calc(70% + 1rem); }
+        #dialog-box.dialog-from-left::after { right: 100%; border-color: transparent var(--card-border) transparent transparent; }
+        #dialog-box.dialog-from-right { right: calc(70% + 1rem); }
+        #dialog-box.dialog-from-right::after { left: 100%; border-color: transparent transparent transparent var(--card-border); }
+
+        /* Footer (Giữ nguyên) */
+        .footer-container { text-align: center; padding: 4rem 1rem; background-color: var(--card-bg); border-top: 1px solid var(--card-border); position: relative; z-index: 5; }
+        .footer-container a { background-color: var(--accent-color); color: #ffffff; font-weight: 700; border-radius: 99px; padding: 0.75rem 2rem; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
+        .footer-container a:hover { background-color: var(--primary-text); }
+
+        /* --- Ngôi Sao Di Chuyển Theo Scroll --- */
+        #scroll-star {
+            position: fixed;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #scroll-star.visible {
+            opacity: 1;
+        }
+        #scroll-star svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.6));
+        }
+
+        /* Media Query */
+        @media (max-width: 768px) {
+             /* Ẩn SVG path trên di động */
+            #timeline-drawing-path-container { display: none; }
+            .timeline-item { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 0; }
+            .timeline-item-left .timeline-text-content, .timeline-item-left .timeline-visual, .timeline-item-right .timeline-text-content, .timeline-item-right .timeline-visual { grid-column: 1; }
+            .timeline-visual { grid-row: 1; }
+            .timeline-text-content { grid-row: 2; }
+            .timeline-text-content h2 { text-align: center; }
+            .timeline-item::after { display: none; }
+            .timeline-container { padding: 4rem 1rem; }
+            .timeline-text-content { padding: 1.5rem; }
+            .province-image { display: block; }
+            #mascot-container { width: 230px; height: 230px; }
+            #mascot-container.position-left { left: -3rem; }
+            #mascot-container.position-right { right: -3rem; }
+            #dialog-box { width: 220px; bottom: 7rem; }
+            #dialog-box.dialog-from-left { left: calc(70% + 0.5rem); }
+            #dialog-box.dialog-from-right { right: calc(70% + 0.5rem); }
+        }
+    </style>
+</head>
+<body>
+
+<section id="landing">
+    <div class="landing-content">
+        <div class="landing-logo-brand mb-8 flex flex-col items-center">
+            <img src="eveREst Logo-03.png" alt="Logo" class="w-24 h-24">
+            <h2 class="text-2xl font-bold mt-2">Team eveREst</h2>
+        </div>
+        <img src="LittleDragon.png" alt="Mascot Rồng Con Tò Te" class="w-56 h-56 sm:w-64 sm:h-64 mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-bold mt-6 max-w-2xl mx-auto px-4">
+            Khám Phá Miền Tây Cùng Rồng Con
+        </h1>
+        <p class="text-lg text-gray-600 mt-4">Cùng tớ chu du qua những miền đất hứa nhé!</p>
+    </div>
+    <div class="scroll-down-arrow">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </div>
+</section>
+
+<!-- Ngôi Sao Di Chuyển Theo Scroll -->
+<div id="scroll-star">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#FFD700"/>
+    </svg>
+</div>
+
+<div id="mascot-container">
+    <div id="dialog-box"><p id="dialog-text"></p></div>
+    <img id="mascot-img" src="LittleDragon.png" alt="Mascot Rồng Con">
+</div>
+
+<div class="parallax-bg cloud1"></div>
+<div class="parallax-bg cloud2"></div>
+
+<div id="provinces-container">
+    <div class="timeline-container">
+        <div id="timeline-drawing-path-container">
+            <svg id="timeline-drawing-path-svg" viewBox="0 0 10 1000" preserveAspectRatio="none">
+                 <path id="drawing-path" d="M 5,0 V 1000"/>
+            </svg>
+        </div>
+
+        <div id="soctrang" class="timeline-item timeline-item-left" data-province="soctrang">
+            <div class="timeline-text-content">
+                <h2 class="province-title text-4xl sm:text-5xl font-bold">Sóc Trăng</h2>
+                <div class="stats-container">
+                    <div class="stat-card"><p class="stat-number" data-target="3312">0</p><p class="stat-label">Diện tích (km²)</p></div>
+                    <div class="stat-card"><p class="stat-number" data-target="1199653">0</p><p class="stat-label">Dân số</p></div>
+                    <div class="stat-card"><p class="stat-number" data-target="109">0</p><p class="stat-label">Xã, Phường, TT</p></div>
+                </div>
+            </div>
+            <div class="timeline-visual">
+                 <img src="soctrang.png" alt="Danh lam Sóc Trăng" class="province-image">
+            </div>
+        </div>
+
+        <div id="haugiang" class="timeline-item timeline-item-right" data-province="haugiang">
+             <div class="timeline-visual">
+                <img src="Thiết kế chưa có tên.png" alt="Danh lam Hậu Giang" class="province-image">
+            </div>
+            <div class="timeline-text-content">
+                <h2 class="province-title text-4xl sm:text-5xl font-bold">Hậu Giang</h2>
+                <div class="stats-container">
+                    <div class="stat-card"><p class="stat-number" data-target="1621">0</p><p class="stat-label">Diện tích (km²)</p></div>
+                    <div class="stat-card"><p class="stat-number" data-target="729400">0</p><p class="stat-label">Dân số</p></div>
+                    <div class="stat-card"><p class="stat-number" data-target="75">0</p><p class="stat-label">Xã, Phường, TT</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cantho" class="timeline-item timeline-item-left" data-province="cantho">
+             <div class="timeline-text-content">
+                <h2 class="province-title text-4xl sm:text-5xl font-bold">Cần Thơ</h2>
+                <div class="stats-container">
+                    <div class="stat-card"><p class="stat-number" data-target="1440">0</p><p class="stat-label">Diện tích (km²)</p></div>
+                    <div class="stat-card"><p class="stat-number" data-target="1252350">0</p><p class="stat-label">Dân số</p></div>
+                    <div class="stat-card"><p class="stat-number" data-target="83">0</p><p class="stat-label">Xã, Phường, TT</p></div>
+                </div>
+            </div>
+            <div class="timeline-visual">
+                <img src="Thiết kế chưa có tên (1).png" alt="Danh lam Cần Thơ" class="province-image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer-container">
+    <h2 class="text-3xl font-bold">Cảm ơn bạn đã đồng hành!</h2>
+    <p class="text-gray-600 mt-2 mb-6" style="color: var(--secondary-text);">Hành trình khám phá vẫn còn tiếp diễn. Hãy ghé thăm trang chủ của evERest nhé.</p>
+    <a href="iindex.html">
+        Về trang chủ eveREst
+    </a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Code Mascot (Giữ nguyên) ---
+    const provinceData = {
+        soctrang: { position: 'left', mascotImage: 'LittleDragon.png', dialog: ["Aha, mình đến Sóc Trăng rồi!", "..."] },
+        haugiang: { position: 'right', mascotImage: 'Artboard 1.png', dialog: ["Tới Hậu Giang rồi, ..."] },
+        cantho: { position: 'left', mascotImage: 'LittleDragon.png', dialog: ["Chào mừng đến Cần Thơ, ..."] }
+    };
+    const mascotContainer = document.getElementById('mascot-container');
+    const mascotImage = document.getElementById('mascot-img');
+    const dialogBox = document.getElementById('dialog-box');
+    const dialogText = document.getElementById('dialog-text');
+    let dialogInterval;
+    let activeProvince = null;
+
+    function showMascot(provinceId) {
+        if (activeProvince === provinceId) return;
+        activeProvince = provinceId;
+        const data = provinceData[provinceId];
+        if (!data) return;
+        mascotContainer.className = `position-${data.position}`;
+        mascotImage.src = data.mascotImage || 'LittleDragon.png';
+        setTimeout(() => {
+            mascotContainer.classList.add('visible');
+            dialogBox.className = `visible dialog-from-${data.position}`;
+        }, 50);
+        let sentenceIndex = 0;
+        clearInterval(dialogInterval);
+        const showNextSentence = () => {
+            dialogBox.classList.remove('visible'); void dialogBox.offsetWidth;
+            dialogBox.classList.add('visible'); dialogText.textContent = data.dialog[sentenceIndex];
+            sentenceIndex = (sentenceIndex + 1) % data.dialog.length;
+        };
+        setTimeout(showNextSentence, 900);
+        dialogInterval = setInterval(showNextSentence, 4000 + 900);
+    }
+    function hideMascot(provinceId) {
+        if (activeProvince === provinceId) {
+            mascotContainer.classList.remove('visible'); dialogBox.classList.remove('visible');
+            activeProvince = null; clearInterval(dialogInterval); mascotContainer.className = '';
+        }
+    }
+
+    // --- Code Đếm Số (Giữ nguyên) ---
+    function animateStatNumbers(element, target) {
+        const duration = 2000; const frameRate = 60; const totalFrames = Math.round((duration / 1000) * frameRate);
+        const increment = target / totalFrames; let current = 0;
+        const timer = setInterval(() => {
+            current += increment; if (current >= target) { current = target; clearInterval(timer); }
+            element.innerText = Math.floor(current).toLocaleString('vi-VN');
+        }, 1000 / frameRate);
+    }
+
+    // --- THAY ĐỔI LỚN: Code cho Đường Path Tự Vẽ ---
+    const path = document.getElementById('drawing-path');
+    const pathSvg = document.getElementById('timeline-drawing-path-svg');
+    const timelineContainer = document.querySelector('.timeline-container'); // Container chứa timeline
+    let pathLength = 0;
+
+    function setupDrawingPath() {
+        if (!path || !pathSvg || !timelineContainer) return;
+
+        // Lấy chiều cao thực tế của container chứa timeline
+        const containerHeight = timelineContainer.offsetHeight;
+        // Cập nhật chiều cao viewBox của SVG và chiều dài đường path
+        pathSvg.setAttribute('viewBox', `0 0 10 ${containerHeight}`);
+        path.setAttribute('d', `M 5,0 V ${containerHeight}`);
+
+        // Tính lại chiều dài path
+        pathLength = path.getTotalLength();
+        // Set dasharray và dashoffset ban đầu để ẩn path
+        path.style.strokeDasharray = pathLength;
+        path.style.strokeDashoffset = pathLength;
+    }
+
+    function updateDrawingPath() {
+         if (!path || pathLength === 0 || window.matchMedia("(max-width: 768px)").matches) return; // Tắt trên di động
+
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        // Vị trí container so với đầu trang
+        const containerTop = timelineContainer.offsetTop;
+        const containerHeight = timelineContainer.offsetHeight;
+
+        // Tính toán tiến trình cuộn BÊNN TRONG container (từ 0 đến 1)
+        // Bắt đầu vẽ khi đỉnh container chạm đáy màn hình, kết thúc khi đáy container chạm đỉnh màn hình
+        const startDraw = containerTop - windowHeight;
+        const endDraw = containerTop + containerHeight - windowHeight; // Kết thúc sớm hơn 1 màn hình
+
+        let progress = (scrollY - startDraw) / (endDraw - startDraw);
+        progress = Math.max(0, Math.min(1, progress)); // Giới hạn 0-1
+
+        // Tính toán dashoffset mới
+        const drawLength = pathLength * (1 - progress);
+        path.style.strokeDashoffset = drawLength;
+    }
+
+    // Chạy lần đầu
+    setupDrawingPath();
+    updateDrawingPath(); // Cập nhật vị trí ban đầu
+
+    // Thêm event listener
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateDrawingPath(); // Cập nhật đường vẽ khi cuộn
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+     // Recalculate on resize
+    window.addEventListener('resize', () => {
+         setupDrawingPath();
+         updateDrawingPath();
+    });
+    // --- Hết Code Đường Path Tự Vẽ ---
+
+
+    // --- Code Observer (Giữ nguyên) ---
+    // 1. Observer cho Mascot, Đếm số, Chấm tròn
+    document.querySelectorAll('.timeline-item').forEach(item => {
+        const provinceId = item.dataset.province;
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    showMascot(provinceId); item.classList.add('dot-visible');
+                    const section = item;
+                    if (section && !section.dataset.animated) {
+                        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                        if (isMobile) { item.querySelectorAll('.stat-number').forEach((stat, index) => { const target = parseInt(stat.dataset.target, 10); stat.innerText = target.toLocaleString('vi-VN'); stat.classList.add('mobile-animate', `delay-${index + 1}`); }); }
+                        else { item.querySelectorAll('.stat-number').forEach(stat => { const target = parseInt(stat.dataset.target, 10); animateStatNumbers(stat, target); }); }
+                        section.dataset.animated = "true";
+                    }
+                } else { hideMascot(provinceId); item.classList.remove('dot-visible'); }
+            });
+        }, { threshold: 0.5 });
+        observer.observe(item);
+    });
+    // 2. Observer cho fade-in nối tiếp
+    const narrativeObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } else { entry.target.classList.remove('is-visible'); } });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.timeline-text-content, .timeline-visual').forEach(block => { narrativeObserver.observe(block); });
+    // 3. Code Parallax (Giữ nguyên)
+    const parallaxElements = document.querySelectorAll('.parallax-bg'); window.addEventListener('scroll', () => { const scrollY = window.scrollY; document.body.style.setProperty('--scroll-y', scrollY); });
+
+    // --- Ngôi Sao Di Chuyển Theo Scroll ---
+    const scrollStar = document.getElementById('scroll-star');
+    
+    function updateScrollStar() {
+        if (!scrollStar || !timelineContainer || window.matchMedia("(max-width: 768px)").matches) {
+            if (scrollStar) scrollStar.classList.remove('visible');
+            return;
+        }
+
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const containerTop = timelineContainer.offsetTop;
+        const containerHeight = timelineContainer.offsetHeight;
+
+        // Tính toán vị trí bắt đầu và kết thúc giống như path
+        const startDraw = containerTop - windowHeight;
+        const endDraw = containerTop + containerHeight - windowHeight;
+
+        let progress = (scrollY - startDraw) / (endDraw - startDraw);
+        progress = Math.max(0, Math.min(1, progress));
+
+        // Hiển thị ngôi sao khi trong khu vực timeline
+        if (progress > 0 && progress < 1) {
+            scrollStar.classList.add('visible');
+            // Tính toán vị trí Y của ngôi sao dựa trên progress
+            const starTopPosition = containerTop - windowHeight + (progress * (endDraw - startDraw));
+            scrollStar.style.top = starTopPosition + 'px';
+        } else {
+            scrollStar.classList.remove('visible');
+        }
+    }
+
+    // Chạy lần đầu
+    updateScrollStar();
+
+    // Thêm vào scroll listener đã có
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateDrawingPath();
+                updateScrollStar(); // Cập nhật vị trí ngôi sao
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // Cập nhật khi resize
+    window.addEventListener('resize', () => {
+        setupDrawingPath();
+        updateDrawingPath();
+        updateScrollStar();
+    });
+
+});
+</script>
+</body>
+</html>

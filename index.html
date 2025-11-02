@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Hành Trình Của Rồng Con - Khám Phá Miền Tây</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=Lora:wght@600;700&display=swap" rel="stylesheet">
+
+	<style>
+		:root {
+			--background-color: #ffffff;
+			--primary-text: #333333;
+			--secondary-text: #555555;
+			--card-border: transparent;
+			--card-bg: #ffffff;
+			--stat-card-bg: #f9f9f9;
+			--accent-color: #00796B;
+			--dark-background: #1a1a1a;
+			--path-color: #5D4037;
+			--vignette-color: #ffffff;
+		}
+
+		body {
+			font-family: 'Be Vietnam Pro', sans-serif;
+			background-color: var(--background-color);
+			background-image:
+				url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23e0e0e0' fill-opacity='0.2' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"),
+				radial-gradient(ellipse at center, var(--background-color) 0%, var(--vignette-color) 100%);
+			background-attachment: fixed;
+			background-position: center center;
+			background-size: auto, cover;
+			color: var(--primary-text);
+			font-weight: 400;
+			overflow-x: hidden;
+			position: relative;
+		}
+
+		html { scroll-behavior: smooth; }
+
+		h1, h2, h3, h4, h5, h6 {
+			font-family: 'Lora', serif;
+			font-weight: 700;
+			color: var(--accent-color);
+		}
+
+		@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+		@keyframes bounceArrow { 0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); } 40% { transform: translate(-50%, -15px); } 60% { transform: translate(-50%, -7px); } }
+		@keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 70% { opacity: 1; transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+		@keyframes pulseDot {
+			0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(93, 64, 55, 0.4); }
+			70% { transform: translate(-50%, -50%) scale(1.2); box-shadow: 0 0 0 10px rgba(93, 64, 55, 0); }
+			100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(93, 64, 55, 0); }
+		}
+
+		/* Intro */
+		#landing { 
+			height: 100vh; 
+			display: flex; 
+			flex-direction: column; 
+			align-items: center; 
+			justify-content: center; 
+			text-align: center; 
+			position: relative; 
+			background-color: var(--dark-background); 
+			z-index: 10; 
+		}
+		#landing h1, #landing h2, #landing p { color: var(--background-color); }
+		#landing .text-lg { color: var(--background-color); opacity: 0.8; }
+		#landing .text-2xl { color: var(--background-color); }
+		#landing .scroll-down-arrow { 
+			color: var(--background-color); 
+			opacity: 0.6;
+			position: absolute;
+			bottom: 2rem;
+			left: 50%;
+			transform: translateX(-50%);
+			animation: bounceArrow 2s infinite;
+		}
+		.landing-logo-brand, .landing-content > img, .landing-content > h1, .landing-content > p, .scroll-down-arrow { 
+			opacity: 0; 
+			animation-fill-mode: forwards; 
+			animation-timing-function: ease-out; 
+		}
+		.landing-logo-brand { animation: fadeIn 1.2s 0.5s forwards; }
+		.landing-content > img { animation: popIn 0.8s 1.0s forwards; }
+		.landing-content > h1 { animation: fadeIn 1.2s 1.8s forwards; }
+		.landing-content > p, .scroll-down-arrow { animation: fadeIn 1.2s 2.2s forwards; }
+
+		/* Timeline Container */
+		#provinces-container { position: relative; z-index: 5; }
+		.timeline-container { 
+			position: relative; 
+			max-width: 1000px; 
+			margin: 0 auto; 
+			padding: 6rem 1rem; 
+		}
+
+		/* Path SVG */
+		#timeline-drawing-path-container {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 400px;
+			height: 100%;
+			z-index: 1;
+			pointer-events: none;
+		}
+		#timeline-drawing-path-svg {
+			display: block;
+			height: 100%;
+			width: 100%;
+			overflow: visible;
+		}
+		#drawing-path {
+			fill: none;
+			stroke: var(--path-color);
+			stroke-width: 4;
+			stroke-dasharray: 1;
+			stroke-dashoffset: 1;
+			stroke-linecap: round;
+		}
+
+		/* Timeline Items */
+		.timeline-item {
+			padding: 10rem 0;
+			position: relative;
+			z-index: 2;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 4rem;
+			align-items: center;
+		}
+
+		.timeline-text-content {
+			background-color: var(--card-bg);
+			border-radius: 1rem;
+			padding: 2rem;
+			border: var(--card-border);
+			box-shadow: none;
+			opacity: 0;
+			transform: translateY(30px);
+			transition: opacity 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+		}
+		.timeline-text-content.is-visible {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		.timeline-item-left .timeline-text-content {
+			margin-right: 2rem;
+		}
+		.timeline-item-right .timeline-text-content {
+			margin-left: 2rem;
+		}
+
+		.province-map-container {
+			width: 100%; 
+			aspect-ratio: 16 / 9; 
+			margin-bottom: 1.5rem; 
+			border-radius: 0.75rem; 
+			overflow: hidden; 
+			border: 1px solid #eee; 
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+		}
+		.province-map-container iframe {
+			width: 100%;
+			height: 100%;
+			border: 0;
+		}
+		.timeline-text-content .province-title {
+			margin-bottom: 1.5rem;
+			text-align: center;
+		}
+
+		.timeline-text-content .province-title, 
+		.timeline-text-content .stats-container, 
+		.timeline-text-content .province-map-container { 
+			opacity: 0; 
+			transform: translateY(20px); 
+			transition: opacity 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+		}
+		.timeline-text-content.is-visible .province-title { 
+			opacity: 1; 
+			transform: translateY(0); 
+			transition-delay: 0.1s; 
+		}
+		.timeline-text-content.is-visible .province-map-container { 
+			opacity: 1; 
+			transform: translateY(0); 
+			transition-delay: 0.15s; 
+		} 
+		.timeline-text-content.is-visible .stats-container { 
+			opacity: 1; 
+			transform: translateY(0); 
+			transition-delay: 0.25s; 
+		} 
+		.timeline-visual.is-visible .province-image { 
+			opacity: 1; 
+			transform: translateY(0); 
+			transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s, scale 0.3s ease; 
+		}
+
+		.timeline-item-left .timeline-text-content { grid-column: 1; grid-row: 1; }
+		.timeline-item-left .timeline-visual { grid-column: 2; grid-row: 1; }
+		.timeline-item-right .timeline-text-content { grid-column: 2; grid-row: 1; }
+		.timeline-item-right .timeline-visual { grid-column: 1; grid-row: 1; }
+
+		.timeline-item::after {
+			display: none;
+		}
+
+		/* Dots */
+		.dot {
+			position: absolute;
+			width: 22px;
+			height: 22px;
+			background: var(--background-color);
+			border: 5px solid var(--path-color);
+			border-radius: 50%;
+			transform: translate(-50%, -50%) scale(0);
+			transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+			z-index: 3;
+		}
+		.dot.visible {
+			transform: translate(-50%, -50%) scale(1);
+			animation: pulseDot 2s infinite ease-in-out 0.5s;
+		}
+
+		/* Visual Images */
+		.timeline-visual {
+			background-color: transparent;
+			border: none;
+			box-shadow: none; 
+			padding: 0;
+			opacity: 0;
+			transform: translateY(30px);
+			transition: opacity 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+		}
+		.timeline-visual.is-visible {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		.timeline-item-right .timeline-visual {
+			margin-right: 2rem; 
+		}
+		.timeline-item-left .timeline-visual {
+			margin-left: 2rem;
+		}
+
+		.province-image {
+			width: 100%; 
+			height: auto; 
+			object-fit: cover;
+			border-radius: 1rem;
+			display: block;
+			box-shadow: none; 
+			will-change: transform;
+			border: none; 
+			opacity: 1;
+			transform: none;
+		}
+		.province-image:hover { 
+			transform: scale(1.05); 
+		}
+
+		/* Stats */
+		.stats-container { 
+			display: flex; 
+			gap: 1rem; 
+			width: 100%; 
+		}
+		.stat-card {
+			background-color: var(--stat-card-bg);
+			border-radius: 0.75rem;
+			padding: 1rem;
+			text-align: center;
+			flex: 1;
+			border: none;
+			transition: transform 0.3s ease, box-shadow 0.3s ease;
+		}
+		.stat-card:hover { 
+			transform: translateY(-5px); 
+			box-shadow: 0 5px 10px -3px rgba(0, 0, 0, 0.05); 
+		} 
+		.stat-number { 
+			font-size: 1.5rem; 
+			font-weight: 700; 
+			color: var(--accent-color); 
+			font-family: 'Nunito Sans', sans-serif; 
+		}
+		.stat-label { 
+			font-size: 0.875rem; 
+			color: var(--secondary-text); 
+			margin-top: 0.25rem; 
+			font-weight: 600; 
+		}
+
+		/* Mascot */
+		#mascot-container { 
+			position: fixed; 
+			z-index: 1000;
+			width: clamp(240px, 35vw, 340px); 
+			height: clamp(240px, 35vw, 340px); 
+			pointer-events: none; 
+			bottom: 2rem; 
+			opacity: 0; 
+			transform-origin: bottom center; 
+			filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.25)); 
+		}
+		#mascot-container.position-left { left: 1.5rem; }
+		#mascot-container.position-right { right: 1.5rem; }
+		#mascot-container.visible { 
+			opacity: 1; 
+			animation: popIn 0.5s ease-out forwards; 
+		}
+		#mascot-container #mascot-img { 
+			width: 100%; 
+			height: 100%; 
+			object-fit: contain; 
+		}
+		#dialog-box {
+			position: absolute;
+			background-color: var(--card-bg);
+			color: var(--primary-text);
+			padding: 1rem 1.25rem;
+			border-radius: 0.5rem;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			border: var(--card-border);
+			font-weight: 600;
+			line-height: 1.6;
+			width: clamp(250px, 50vw, 340px);
+			pointer-events: auto;
+			bottom: 10rem;
+			opacity: 0;
+			transform: translateY(0);
+			transition: opacity 0.4s ease-out 0.5s, transform 0.4s ease-out 0.5s;
+		}
+		#dialog-box.visible { 
+			opacity: 1; 
+			transform: translateY(-10px); 
+		}
+		#dialog-box::after {
+			content: '';
+			position: absolute;
+			border-width: 12px;
+			border-style: solid;
+			bottom: 1.5rem;
+		}
+		#dialog-box.dialog-from-left { left: calc(70% + 1rem); }
+		#dialog-box.dialog-from-left::after { 
+			right: 100%; 
+			border-color: transparent var(--card-bg) transparent transparent; 
+		}
+		#dialog-box.dialog-from-right { right: calc(70% + 1rem); }
+		#dialog-box.dialog-from-right::after { 
+			left: 100%; 
+			border-color: transparent transparent transparent var(--card-bg); 
+		}
+
+		/* Footer */
+		.footer-container {
+			text-align: center;
+			padding: 4rem 1rem;
+			background-color: var(--card-bg);
+			border-top: none;
+			position: relative;
+			z-index: 5;
+			box-shadow: 0 -5px 15px -5px rgba(0, 0, 0, 0.05);
+		}
+		.footer-container a { 
+			background-color: var(--accent-color); 
+			color: #ffffff; 
+			font-weight: 700; 
+			border-radius: 99px; 
+			padding: 0.75rem 2rem; 
+			transition: all 0.3s ease; 
+			text-decoration: none; 
+			display: inline-block; 
+		}
+		.footer-container a:hover { 
+			background-color: var(--primary-text); 
+		}
+
+		/* Scroll Star */
+		#scroll-star {
+			position: absolute;
+			width: 65px; 
+			height: 65px;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+			pointer-events: none;
+			z-index: 999; 
+		}
+		#scroll-star.visible {
+			opacity: 1;
+		}
+		#scroll-star img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain; 
+		}
+
+		/* ==================== MOBILE RESPONSIVE ==================== */
+		@media (max-width: 768px) {
+			/* Landing Page Mobile */
+			#landing {
+				padding: 2rem 1rem;
+			}
+			.landing-content > img {
+				width: 180px !important;
+				height: 180px !important;
+			}
+			#landing h1 {
+				font-size: 1.75rem !important;
+			}
+			#landing p {
+				font-size: 1rem !important;
+			}
+
+			/* Path Container - Đường thẳng dọc giữa màn hình */
+			#timeline-drawing-path-container {
+				width: 60px;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			/* Path thẳng dọc với nét đứt */
+			#drawing-path {
+				stroke-dasharray: 10 15;
+			}
+
+			/* Timeline Container */
+			.timeline-container {
+				padding: 3rem 1rem;
+			}
+
+			/* Timeline Items - Layout 1 cột */
+			.timeline-item {
+				grid-template-columns: 1fr !important;
+				gap: 1.5rem;
+				padding: 4rem 0;
+				align-items: stretch;
+			}
+
+			/* Thứ tự hiển thị: Title + Map + Stats (row 1) -> Image (row 2) */
+			.timeline-item-left .timeline-text-content,
+			.timeline-item-right .timeline-text-content {
+				grid-column: 1 !important;
+				grid-row: 1 !important;
+				margin: 0 !important;
+				padding: 1.5rem;
+			}
+
+			.timeline-item-left .timeline-visual,
+			.timeline-item-right .timeline-visual {
+				grid-column: 1 !important;
+				grid-row: 2 !important;
+				margin: 0 !important;
+			}
+
+			/* Province Title */
+			.timeline-text-content .province-title {
+				font-size: 2rem !important;
+				margin-bottom: 1rem;
+			}
+
+			/* Dot indicator mobile - giống desktop */
+			.timeline-item::before {
+				content: '';
+				position: absolute;
+				left: 50%;
+				top: 2rem; /* Xích xuống một chút */
+				transform: translate(-50%, -50%) scale(0);
+				width: 18px;
+				height: 18px;
+				background: var(--background-color);
+				border: 4px solid var(--path-color); /* Cùng màu với path */
+				border-radius: 50%;
+				box-shadow: 0 2px 8px rgba(93, 64, 55, 0.3);
+				z-index: 10;
+				transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+			}
+
+			/* Hiển thị dot khi visible */
+			.timeline-item.dot-visible::before {
+				transform: translate(-50%, -50%) scale(1);
+				animation: pulseDot 2s infinite ease-in-out 0.5s;
+			}
+
+			/* Map vuông trên mobile */
+			.province-map-container {
+				aspect-ratio: 1 / 1;
+				margin-bottom: 1rem;
+			}
+
+			/* Stats dạng cột dọc */
+			.stats-container {
+				flex-direction: column;
+				gap: 0.75rem;
+			}
+
+			.stat-card {
+				padding: 0.875rem;
+			}
+
+			.stat-number {
+				font-size: 1.25rem;
+			}
+
+			.stat-label {
+				font-size: 0.8rem;
+			}
+
+			/* Province Images - Full width */
+			.province-image {
+				width: 100%;
+				height: auto;
+				border-radius: 0.75rem;
+			}
+
+			/* Dots nhỏ hơn */
+			.dot {
+				width: 18px;
+				height: 18px;
+				border-width: 4px;
+			}
+
+			/* Scroll Star nhỏ hơn */
+			#scroll-star {
+				width: 45px;
+				height: 45px;
+			}
+
+			/* Mascot Mobile */
+			#mascot-container {
+				width: 160px;
+				height: 160px;
+				bottom: 1rem;
+			}
+
+			#mascot-container.position-left {
+				left: -2rem;
+			}
+
+			#mascot-container.position-right {
+				right: -2rem;
+			}
+
+			#dialog-box {
+				width: 180px;
+				padding: 0.75rem 1rem;
+				bottom: 5rem;
+				font-size: 0.875rem;
+			}
+
+			#dialog-box.dialog-from-left {
+				left: calc(65% + 0.5rem);
+			}
+
+			#dialog-box.dialog-from-right {
+				right: calc(65% + 0.5rem);
+			}
+
+			#dialog-box::after {
+				border-width: 8px;
+			}
+
+			/* Footer Mobile */
+			.footer-container {
+				padding: 3rem 1rem;
+			}
+
+			.footer-container h2 {
+				font-size: 1.5rem;
+			}
+
+			.footer-container p {
+				font-size: 0.9rem;
+			}
+
+			.footer-container a {
+				padding: 0.625rem 1.5rem;
+				font-size: 0.9rem;
+			}
+		}
+
+		/* Extra Small Mobile */
+		@media (max-width: 480px) {
+			.timeline-text-content {
+				padding: 1.25rem;
+			}
+
+			.timeline-text-content .province-title {
+				font-size: 1.75rem !important;
+			}
+
+			.stats-container {
+				gap: 0.5rem;
+			}
+
+			.stat-card {
+				padding: 0.75rem;
+			}
+
+			#mascot-container {
+				width: 140px;
+				height: 140px;
+			}
+
+			#dialog-box {
+				width: 160px;
+				font-size: 0.8rem;
+			}
+		}
+	</style>
+</head>
+<body>
+
+<section id="landing">
+	<div class="landing-content">
+		<div class="landing-logo-brand mb-8 flex flex-col items-center">
+			<img src="eveREst Logo-03.png" alt="Logo" class="w-24 h-24">
+			<h2 class="text-2xl font-bold mt-2">Team eveREst</h2>
+		</div>
+		<img src="LittleDragon.png" alt="Mascot Rồng Con Tò Te" class="w-56 h-56 sm:w-64 sm:h-64 mx-auto">
+		<h1 class="text-3xl sm:text-4xl font-bold mt-6 max-w-2xl mx-auto px-4">
+			Khám Phá Miền Tây Cùng Rồng Con
+		</h1>
+		<p class="text-lg text-gray-600 mt-4">Cùng tớ chu du qua những miền đất hứa nhé!</p>
+	</div>
+	<div class="scroll-down-arrow">
+		<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+		</svg>
+	</div>
+</section>
+
+<div id="mascot-container">
+	<div id="dialog-box"><p id="dialog-text"></p></div>
+	<img id="mascot-img" src="LittleDragon.png" alt="Mascot Rồng Con">
+</div>
+
+<div id="provinces-container">
+	<div class="timeline-container">
+		<div id="timeline-drawing-path-container">
+			<div id="scroll-star">
+				<img src="—Pngtree—glossy yellow rounded star_20728131.png" alt="Icon di chuyển" />
+			</div>
+
+			<svg id="timeline-drawing-path-svg" viewBox="0 0 400 1000" preserveAspectRatio="none">
+				<path id="drawing-path" d="M 200,0 Q 280,200 200,400 Q 120,600 200,800 Q 280,900 200,1000"/>
+			</svg>
+
+			<div class="dot" data-section="soctrang"></div>
+			<div class="dot" data-section="haugiang"></div>
+			<div class="dot" data-section="cantho"></div>
+		</div>
+
+		<div id="soctrang" class="timeline-item timeline-item-left" data-province="soctrang">
+			<div class="timeline-text-content">
+				<h2 class="province-title text-4xl sm:text-5xl font-bold">Sóc Trăng</h2>
+				<div class="province-map-container">
+					<iframe src="./Map of Sóc Trăng.html" loading="lazy"></iframe>
+				</div>
+				<div class="stats-container">
+					<div class="stat-card"><p class="stat-number" data-target="3312">0</p><p class="stat-label">Diện tích (km²)</p></div>
+					<div class="stat-card"><p class="stat-number" data-target="1199653">0</p><p class="stat-label">Dân số</p></div>
+					<div class="stat-card"><p class="stat-number" data-target="109">0</p><p class="stat-label">Xã, Phường, TT</p></div>
+				</div>
+			</div>
+			<div class="timeline-visual">
+				<img src="Dragon2.png" alt="Danh lam Sóc Trăng" class="province-image">
+			</div>
+		</div>
+
+		<div id="haugiang" class="timeline-item timeline-item-right" data-province="haugiang">
+			<div class="timeline-visual">
+				<img src="Dragon1.png" alt="Danh lam Hậu Giang" class="province-image">
+			</div>
+			<div class="timeline-text-content">
+				<h2 class="province-title text-4xl sm:text-5xl font-bold">Hậu Giang</h2>
+				<div class="province-map-container">
+					<iframe src="./Map of Hậu Giang.html" loading="lazy"></iframe>
+				</div>
+				<div class="stats-container">
+					<div class="stat-card"><p class="stat-number" data-target="1621">0</p><p class="stat-label">Diện tích (km²)</p></div>
+					<div class="stat-card"><p class="stat-number" data-target="729400">0</p><p class="stat-label">Dân số</p></div>
+					<div class="stat-card"><p class="stat-number" data-target="75">0</p><p class="stat-label">Xã, Phường, TT</p></div>
+				</div>
+			</div>
+		</div>
+
+		<div id="cantho" class="timeline-item timeline-item-left" data-province="cantho">
+			<div class="timeline-text-content">
+				<h2 class="province-title text-4xl sm:text-5xl font-bold">Cần Thơ</h2>
+				<div class="province-map-container">
+					<iframe src="./Map of Cần Thơ.html" loading="lazy"></iframe>
+				</div>
+				<div class="stats-container">
+					<div class="stat-card"><p class="stat-number" data-target="1440">0</p><p class="stat-label">Diện tích (km²)</p></div>
+					<div class="stat-card"><p class="stat-number" data-target="1252350">0</p><p class="stat-label">Dân số</p></div>
+					<div class="stat-card"><p class="stat-number" data-target="83">0</p><p class="stat-label">Xã, Phường, TT</p></div>
+				</div>
+			</div>
+			<div class="timeline-visual">
+				<img src="Dragon3.png" alt="Danh lam Cần Thơ" class="province-image">
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer-container">
+	<h2 class="text-3xl font-bold">Cảm ơn bạn đã đồng hành!</h2>
+	<p class="text-gray-600 mt-2 mb-6" style="color: var(--secondary-text);">Hành trình khám phá vẫn còn tiếp diễn. Hãy ghé thăm trang chủ của evERest nhé.</p>
+	<a href="iindex.html">
+		Về trang chủ eveREst
+	</a>
+</footer>
+
+<script>
+window.addEventListener('load', () => {
+	// Mascot Data
+	const provinceData = {
+		soctrang: { 
+			position: 'left', 
+			mascotImage: 'LittleDragon.png', 
+			dialog: ["Aha, mình đến Sóc Trăng rồi!", "Nơi đây nổi tiếng với chùa Khmer đẹp lắm!"] 
+		},
+		haugiang: { 
+			position: 'right', 
+			mascotImage: 'Artboard 1.png', 
+			dialog: ["Tới Hậu Giang rồi!", "Quê hương trái cây ngọt ngào nhất miền Tây!"] 
+		},
+		cantho: { 
+			position: 'left', 
+			mascotImage: 'LittleDragon.png', 
+			dialog: ["Chào mừng đến Cần Thơ!", "Chợ nổi Cái Răng buổi sáng rất đông vui!"] 
+		}
+	};
+	
+	const mascotContainer = document.getElementById('mascot-container');
+	const mascotImage = document.getElementById('mascot-img');
+	const dialogBox = document.getElementById('dialog-box');
+	const dialogText = document.getElementById('dialog-text');
+	let dialogInterval;
+	let activeProvince = null;
+
+	function showMascot(provinceId) {
+		if (activeProvince === provinceId) return;
+		activeProvince = provinceId;
+		const data = provinceData[provinceId];
+		if (!data) return;
+		mascotContainer.className = `position-${data.position}`;
+		mascotImage.src = data.mascotImage || 'LittleDragon.png';
+		setTimeout(() => {
+			mascotContainer.classList.add('visible');
+			dialogBox.className = `visible dialog-from-${data.position}`;
+		}, 50);
+		let sentenceIndex = 0;
+		clearInterval(dialogInterval);
+		const showNextSentence = () => {
+			dialogBox.classList.remove('visible'); 
+			void dialogBox.offsetWidth;
+			dialogBox.classList.add('visible'); 
+			dialogText.textContent = data.dialog[sentenceIndex];
+			sentenceIndex = (sentenceIndex + 1) % data.dialog.length;
+		};
+		setTimeout(showNextSentence, 900);
+		dialogInterval = setInterval(showNextSentence, 4900);
+	}
+	
+	function hideMascot(provinceId) {
+		if (activeProvince === provinceId) {
+			mascotContainer.classList.remove('visible'); 
+			dialogBox.classList.remove('visible');
+			activeProvince = null; 
+			clearInterval(dialogInterval); 
+			mascotContainer.className = '';
+		}
+	}
+
+	// Animate Numbers
+	function animateStatNumbers(element, target) {
+		const duration = 2000; 
+		const frameRate = 60; 
+		const totalFrames = Math.round((duration / 1000) * frameRate);
+		const increment = target / totalFrames; 
+		let current = 0;
+		element.innerText = "0";
+		const timer = setInterval(() => {
+			current += increment; 
+			if (current >= target) { 
+				current = target; 
+				clearInterval(timer); 
+			}
+			element.innerText = Math.floor(current).toLocaleString('vi-VN');
+		}, 1000 / frameRate);
+	}
+
+	// Elements
+	const path = document.getElementById('drawing-path');
+	const pathSvg = document.getElementById('timeline-drawing-path-svg');
+	const timelineContainer = document.querySelector('.timeline-container');
+	const scrollStar = document.getElementById('scroll-star');
+	const allSections = document.querySelectorAll('.timeline-item');
+	const dots = document.querySelectorAll('.dot');
+	let pathLength = 0;
+	let maxStarProgress = 1.0;
+
+	// Position dots
+	function positionDotsAndStoreTrigger() {
+		if (pathLength === 0) return;
+		const containerHeight = timelineContainer.offsetHeight;
+		allSections.forEach((section, index) => {
+			const sectionTop = section.offsetTop - timelineContainer.offsetTop;
+			const sectionMiddle = sectionTop + (section.offsetHeight / 2);
+			const relativePosition = sectionMiddle / containerHeight;
+			const distance = pathLength * relativePosition;
+			section.dataset.triggerDistance = distance;
+			if (index === allSections.length - 1) {
+				maxStarProgress = (distance / pathLength);
+			}
+			const point = path.getPointAtLength(distance);
+			const dot = dots[index];
+			if (dot) {
+				dot.style.left = point.x + 'px';
+				dot.style.top = point.y + 'px';
+			}
+		});
+	}
+
+	// Setup Path
+	function setupDrawingPath() {
+		if (!path || !pathSvg || !timelineContainer) return;
+
+		const containerHeight = timelineContainer.offsetHeight;
+		const isMobile = window.matchMedia("(max-width: 768px)").matches;
+		let pathData = '';
+		
+		if (isMobile) {
+			// Mobile: Đường thẳng dọc
+			pathSvg.setAttribute('viewBox', `0 0 60 ${containerHeight}`);
+			const mobileX = 30;
+			pathData = `M ${mobileX},0 L ${mobileX},${containerHeight}`;
+		} else {
+			// PC: Đường uốn lượn
+			pathSvg.setAttribute('viewBox', `0 0 400 ${containerHeight}`);
+			const numWaves = 5;
+			pathData = 'M 200,0';
+
+			for (let i = 0; i < numWaves; i++) {
+				const segment = containerHeight / numWaves;
+				const y1 = segment * i + segment * 0.5;
+				const y2 = segment * (i + 1);
+				const controlX = i % 2 === 0 ? 280 : 120;
+				pathData += ` Q ${controlX},${y1} 200,${y2}`;
+			}
+		}
+
+		path.setAttribute('d', pathData);
+		pathLength = path.getTotalLength();
+		path.style.strokeDasharray = pathLength;
+		path.style.strokeDashoffset = pathLength;
+		positionDotsAndStoreTrigger();
+	}
+
+	// Update Path and Star
+	function updatePathAndStar() {
+		if (pathLength === 0) {
+			scrollStar.classList.remove('visible');
+			return;
+		}
+
+		const scrollY = window.scrollY;
+		const windowHeight = window.innerHeight;
+		const containerTop = timelineContainer.offsetTop;
+		const containerHeight = timelineContainer.offsetHeight;
+
+		const startDraw = containerTop;
+		const endDraw = containerTop + containerHeight + (windowHeight / 2);
+
+		let progress = (scrollY - startDraw) / (endDraw - startDraw);
+		progress = Math.max(0, Math.min(1, progress));
+
+		let cappedProgress = Math.min(progress, maxStarProgress);
+
+		const drawLength = pathLength * (1 - cappedProgress);
+		path.style.strokeDashoffset = drawLength;
+
+		const shownLength = pathLength * cappedProgress;
+
+		allSections.forEach((section, index) => {
+			const dot = dots[index];
+			const triggerDistance = parseFloat(section.dataset.triggerDistance || 0);
+			const triggerOffset = 0; 
+
+			if (shownLength >= (triggerDistance - triggerOffset)) {
+				dot?.classList.add('visible');
+				section.querySelector('.timeline-text-content')?.classList.add('is-visible');
+				section.querySelector('.timeline-visual')?.classList.add('is-visible');
+				
+				// Thêm class cho dot mobile
+				section.classList.add('dot-visible');
+
+				if (!section.dataset.animated) {
+					const provinceId = section.dataset.province;
+					showMascot(provinceId);
+
+					section.querySelectorAll('.stat-number').forEach(stat => {
+						const target = parseInt(stat.dataset.target, 10);
+						animateStatNumbers(stat, target);
+					});
+					
+					section.dataset.animated = "true";
+				}
+			} else { 
+				dot?.classList.remove('visible');
+				section.querySelector('.timeline-text-content')?.classList.remove('is-visible');
+				section.querySelector('.timeline-visual')?.classList.remove('is-visible');
+				
+				// Xóa class dot mobile
+				section.classList.remove('dot-visible');
+
+				if (section.dataset.animated) {
+					hideMascot(section.dataset.province);
+					section.dataset.animated = "";
+				}
+			}
+		});
+
+		if (progress > 0.02) {
+			scrollStar.classList.add('visible');
+			const distance = pathLength * cappedProgress;
+			const point = path.getPointAtLength(distance);
+			
+			// Căn giữa ngôi sao: trừ đi một nửa kích thước
+			const starSize = scrollStar.offsetWidth || 65;
+			const halfSize = starSize / 2;
+			
+			// Kiểm tra mobile để xích ngôi sao sang phải
+			const isMobile = window.matchMedia("(max-width: 768px)").matches;
+			const mobileOffset = isMobile ? 0 : 0; // Xích 15px sang phải trên mobile
+			
+			scrollStar.style.left = (point.x - halfSize + mobileOffset) + 'px';
+			scrollStar.style.top = (point.y - halfSize) + 'px';
+			
+			const rotationSpeed = 0.5;
+			const rotationAngle = distance * rotationSpeed;
+			scrollStar.style.transform = `rotate(${rotationAngle}deg)`;
+		} else {
+			scrollStar.classList.remove('visible');
+		}
+	}
+
+	// Initialize
+	setupDrawingPath();
+	updatePathAndStar();
+
+	// Event Listeners
+	let ticking = false;
+	window.addEventListener('scroll', () => {
+		if (!ticking) {
+			window.requestAnimationFrame(() => {
+				updatePathAndStar();
+				ticking = false;
+			});
+			ticking = true;
+		}
+	});
+
+	window.addEventListener('resize', () => {
+		setTimeout(() => {
+			setupDrawingPath();
+			updatePathAndStar();
+		}, 100);
+	});
+});
+</script>
+</body>
+</html

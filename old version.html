@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hành Trình Của Rồng Con - Khám Phá Miền Tây</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #ffffff;
+            --primary-text: #1f2937;
+            --secondary-text: #4b5563;
+            --card-border: #e5e7eb;
+            --card-bg: #ffffff;
+            --stat-card-bg: #f3f4f6;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--background-color);
+            color: var(--primary-text);
+            overflow-x: hidden;
+        }
+        html { scroll-behavior: smooth; }
+
+        /* === HIỆU ỨNG === */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 70% { opacity: 1; transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes bounceArrow { 0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); } 40% { transform: translate(-50%, -15px); } 60% { transform: translate(-50%, -7px); } }
+
+        /* === LANDING PAGE === */
+        #landing {
+            height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; position: relative;
+        }
+        .landing-content { animation: fadeIn 1.2s ease-out forwards; }
+        .scroll-down-arrow {
+            position: absolute; bottom: 2rem; left: 50%;
+            animation: bounceArrow 2.5s infinite; z-index: 2;
+        }
+
+        /* === SECTION TỈNH THÀNH === */
+        .province-section {
+            min-height: 100vh;
+            padding: 6rem 1rem;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center;
+        }
+        .content-container {
+            width: 95%;
+            max-width: 1024px;
+            background-color: var(--card-bg);
+            border-radius: 0;
+            padding: clamp(2rem, 5vw, 3rem);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .province-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .main-content-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        
+        /* === CẤU TRÚC CHO CỘT HÌNH ẢNH VÀ STATS === */
+        .image-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .order-first { order: -1; }
+
+        .map-container {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* === ẢNH MINH HỌA CÁC TỈNH === */
+        .province-image {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            display: block;
+        }
+        
+        #haugiang .province-image {
+            transform: scaleX(-1) scale(1.3)translateY(-30px);
+            width: 120%;
+        }
+
+        /* === STATS CONTAINER === */
+        .stats-container {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+        }
+        .stat-card {
+            background-color: var(--stat-card-bg);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            flex: 1;
+            border: none;
+        }
+        .stat-number { font-size: 1.5rem; font-weight: 700; color: #1f2937; }
+        .stat-label { font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem; font-weight: 600; }
+
+        /* === ANIMATION CHO MOBILE === */
+        @keyframes slideUpFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stat-card.mobile-animate {
+            opacity: 0;
+            animation: slideUpFadeIn 0.8s ease-out forwards;
+        }
+        
+        .stat-card.mobile-animate:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card.mobile-animate:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card.mobile-animate:nth-child(3) { animation-delay: 0.3s; }
+
+        /* === MASCOT & FOOTER === */
+        #mascot-container {
+            position: fixed; z-index: 100;
+            width: clamp(240px, 35vw, 340px);
+            height: clamp(240px, 35vw, 340px);
+            pointer-events: none; bottom: 2rem; opacity: 0;
+            transform-origin: bottom center; transition: opacity 0.3s ease-out, left 0.3s, right 0.3s, width 0.3s, height 0.3s;
+        }
+        #mascot-container.visible { opacity: 1; animation: popIn 0.5s ease-out forwards; }
+        #mascot-container #mascot-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.4s ease; }
+        #mascot-container.flipped #mascot-img { transform: scaleX(-1); }
+        #mascot-container.position-left { left: 1.5rem; }
+        #mascot-container.position-right { right: 1.5rem; }
+
+        #dialog-box {
+            position: absolute;
+            background-color: #ffffff;
+            color: var(--primary-text);
+            padding: 1rem 1.25rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid #9ca3af;  
+            font-weight: 600;
+            line-height: 1.6;
+            width: clamp(250px, 50vw, 340px);
+            pointer-events: auto;
+            bottom: 10rem;
+            opacity: 0;
+            transition: all 0.3s ease-out;
+        }
+        #dialog-box.visible { opacity: 1; transform: translateY(-10px); }
+        #dialog-box::after {
+            content: ''; position: absolute;
+            border-width: 12px; border-style: solid; bottom: 1.5rem;
+        }
+        #dialog-box.dialog-from-left { left: calc(70% + 1rem); }
+        #dialog-box.dialog-from-left::after { right: 100%; border-color: transparent #9ca3af transparent transparent; }
+        #dialog-box.dialog-from-right { right: calc(70% + 1rem); }
+        #dialog-box.dialog-from-right::after { left: 100%; border-color: transparent transparent transparent #9ca3af; }
+
+        .footer-container { text-align: center; padding: 4rem 1rem; background-color: #f9fafb; border-top: 1px solid var(--card-border); }
+
+        /* === CSS DÀNH RIÊNG CHO MOBILE (max-width: 768px) === */
+        @media (max-width: 768px) {
+            .main-content-grid { 
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .order-first { 
+                order: 0; 
+            }
+
+            /* Ẩn hình minh họa các tỉnh trên mobile */
+            .province-image {
+                display: none;
+            }
+
+            /* THAY ĐỔI: Phóng to mascot trên mobile */
+            #mascot-container {
+                width: 220px;
+                height: 220px;
+            }
+            #mascot-container.position-left { 
+                left: 0.5rem;
+            }
+            #mascot-container.position-right { 
+                right: 0.5rem; 
+            }
+
+            /* THAY ĐỔI: Điều chỉnh hộp thoại cho tương xứng */
+            #dialog-box {
+                width: 220px; /* Rộng bằng mascot */
+                bottom: 12rem; /* Nâng cao lên trên mascot */
+            }
+             #dialog-box.dialog-from-left { 
+                 left: calc(50% + 0.5rem); 
+             }
+             #dialog-box.dialog-from-right { 
+                 right: calc(50% + 0.5rem);
+             }
+
+            #haugiang .province-image {
+                transform: none;
+                width: 100%;
+            }
+			
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+
+<section id="landing">
+    <div class="landing-content">
+        <div class="landing-logo-brand mb-8 flex flex-col items-center">
+            <img src="eveREst Logo-03.png" alt="Logo" class="w-24 h-24">
+            <h2 class="text-2xl font-bold mt-2">Team eveREst</h2>
+        </div>
+        <img src="LittleDragon.png" alt="Mascot Rồng Con Tò Te" class="w-56 h-56 sm:w-64 sm:h-64 mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-bold mt-6 max-w-2xl mx-auto px-4">
+            Khám Phá Miền Tây Cùng Rồng Con 
+        </h1>
+        <p class="text-lg text-gray-600 mt-4">Cùng tớ chu du qua những miền đất hứa nhé!</p>
+    </div>
+    <div class="scroll-down-arrow">
+        <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </div>
+</section>
+
+<div id="mascot-container">
+    <div id="dialog-box"><p id="dialog-text"></p></div>
+    <img id="mascot-img" src="LittleDragon.png" alt="Mascot Rồng Con">
+</div>
+
+<div id="provinces-container">
+    <section id="soctrang" class="province-section" data-province="soctrang">
+        <div class="content-container">
+            <h2 class="province-title text-4xl sm:text-5xl font-bold">Sóc Trăng</h2>
+            <div class="main-content-grid">
+                <div class="map-container">
+                    <iframe src="./Map of Sóc Trăng.html" loading="lazy"></iframe>
+                </div>
+                <div class="image-showcase">
+                    <div class="stats-container">
+                        <div class="stat-card"><p class="stat-number" data-target="3312">0</p><p class="stat-label">Diện tích (km²)</p></div>
+                        <div class="stat-card"><p class="stat-number" data-target="1199653">0</p><p class="stat-label">Dân số</p></div>
+                        <div class="stat-card"><p class="stat-number" data-target="109">0</p><p class="stat-label">Xã, Phường, TT</p></div>
+                    </div>
+                    <img src="soctrang.png" alt="Danh lam Sóc Trăng" class="province-image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="haugiang" class="province-section" data-province="haugiang">
+        <div class="content-container">
+            <h2 class="province-title text-4xl sm:text-5xl font-bold">Hậu Giang</h2>
+            <div class="main-content-grid">
+                <div class="image-showcase order-first">
+                    <div class="stats-container">
+                        <div class="stat-card"><p class="stat-number" data-target="1621">0</p><p class="stat-label">Diện tích (km²)</p></div>
+                        <div class="stat-card"><p class="stat-number" data-target="729400">0</p><p class="stat-label">Dân số</p></div>
+                        <div class="stat-card"><p class="stat-number" data-target="75">0</p><p class="stat-label">Xã, Phường, TT</p></div>
+                    </div>
+                    <img src="Thiết kế chưa có tên.png" alt="Danh lam Hậu Giang" class="province-image">
+                </div>
+                <div class="map-container">
+                    <iframe src="./Map of Hậu Giang.html" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cantho" class="province-section" data-province="cantho">
+        <div class="content-container">
+            <h2 class="province-title text-4xl sm:text-5xl font-bold">Cần Thơ</h2>
+            <div class="main-content-grid">
+                <div class="map-container">
+                    <iframe src="./Map of Cần Thơ.html" loading="lazy"></iframe>
+                </div>
+                <div class="image-showcase">
+                    <div class="stats-container">
+                        <div class="stat-card"><p class="stat-number" data-target="1440">0</p><p class="stat-label">Diện tích (km²)</p></div>
+                        <div class="stat-card"><p class="stat-number" data-target="1252350">0</p><p class="stat-label">Dân số</p></div>
+                        <div class="stat-card"><p class="stat-number" data-target="83">0</p><p class="stat-label">Xã, Phường, TT</p></div>
+                    </div>
+                    <img src="Thiết kế chưa có tên (1).png" alt="Danh lam Cần Thơ" class="province-image">
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer class="footer-container">
+    <h2 class="text-3xl font-bold">Cảm ơn bạn đã đồng hành!</h2>
+    <p class="text-gray-600 mt-2 mb-6">Hành trình khám phá vẫn còn tiếp diễn. Hãy ghé thăm trang chủ của evERest nhé.</p>
+    <a href="#" class="inline-block bg-gray-800 text-white font-bold py-3 px-8 hover:bg-gray-700 transition-colors">
+        Về trang chủ eveREst
+    </a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const reorderForMobile = () => {
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            document.querySelectorAll('.main-content-grid').forEach(grid => {
+                const stats = grid.querySelector('.stats-container');
+                const map = grid.querySelector('.map-container');
+                if (stats && map) {
+                    grid.appendChild(stats);
+                    grid.appendChild(map);
+                }
+            });
+        }
+    };
+    reorderForMobile();
+
+    const provinceData = {
+        soctrang: { position: 'left', flipped: false, dialog: ["Aha, mình đến Sóc Trăng rồi!", "Nơi đây là sự giao thoa văn hoá Kinh, Hoa, Khmer đặc sắc lắm đó.", "Bạn nhớ thử bánh Pía thơm lừng và ghé thăm Chùa Dơi bí ẩn nhé!", "Con người ở đây thì siêu dễ thương và hiếu khách luôn!"] },
+        haugiang: { position: 'right', flipped: true, dialog: ["Tới Hậu Giang rồi, một vùng đất trù phú!", "Đây là vựa lúa lớn của miền Tây, và còn có khóm Cầu Đúc ngọt lịm.", "Mình nghe nói chợ nổi Ngã Bảy trên sông rất nhộn nhịp đó.", "Món chả cá thác lác ở đây là đặc sản số một, phải thử nha!"] },
+        cantho: { position: 'left', flipped: false, dialog: ["Chào mừng đến Cần Thơ, thủ phủ của miền Tây sông nước!", "Bạn đã sẵn sàng đi thuyền trên Bến Ninh Kiều chưa?", "Chợ nổi Cái Răng buổi sáng sớm là một trải nghiệm tuyệt vời không thể bỏ lỡ.", "Cùng mình khám phá những miệt vườn cây trái sum suê nào!"] }
+    };
+    const mascotContainer = document.getElementById('mascot-container');
+    const dialogBox = document.getElementById('dialog-box');
+    const dialogText = document.getElementById('dialog-text');
+    let dialogInterval;
+    let activeProvince = null;
+
+    function showMascot(provinceId) {
+        if (activeProvince === provinceId) return;
+        activeProvince = provinceId;
+        const data = provinceData[provinceId];
+        if (!data) return;
+        mascotContainer.className = `position-${data.position}`;
+        data.flipped ? mascotContainer.classList.add('flipped') : mascotContainer.classList.remove('flipped');
+        mascotContainer.classList.add('visible');
+        dialogBox.className = `visible dialog-from-${data.position}`;
+        let sentenceIndex = 0;
+        clearInterval(dialogInterval);
+        const showNextSentence = () => {
+            dialogBox.classList.remove('visible');
+            void dialogBox.offsetWidth;
+            dialogBox.classList.add('visible');
+            dialogText.textContent = data.dialog[sentenceIndex];
+            sentenceIndex = (sentenceIndex + 1) % data.dialog.length;
+        };
+        showNextSentence();
+        dialogInterval = setInterval(showNextSentence, 4000);
+    }
+
+    function hideMascot(provinceId) {
+        if (activeProvince === provinceId) {
+            mascotContainer.classList.remove('visible');
+            dialogBox.classList.remove('visible');
+            activeProvince = null;
+            clearInterval(dialogInterval);
+        }
+    }
+
+    function animateStatNumbers(element, target) {
+        const duration = 3000;
+        const frameRate = 60;
+        const totalFrames = Math.round((duration / 1000) * frameRate);
+        const increment = target / totalFrames;
+        let current = 0;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.innerText = Math.floor(current).toLocaleString('vi-VN');
+        }, 1000 / frameRate);
+    }
+
+    document.querySelectorAll('.province-section').forEach(section => {
+        const provinceId = section.dataset.province;
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    showMascot(provinceId);
+                    if (!section.dataset.animated) {
+                        // Kiểm tra xem có phải mobile không
+                        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                        
+                        if (isMobile) {
+                            // Trên mobile: chỉ hiển thị số và thêm animation fade-in
+                            section.querySelectorAll('.stat-number').forEach(stat => {
+                                const target = parseInt(stat.dataset.target, 10);
+                                stat.innerText = target.toLocaleString('vi-VN');
+                            });
+                            
+                            // Thêm class animation cho các stat cards
+                            section.querySelectorAll('.stat-card').forEach(card => {
+                                card.classList.add('mobile-animate');
+                            });
+                        } else {
+                            // Trên desktop: giữ nguyên animation chạy số
+                            section.querySelectorAll('.stat-number').forEach(stat => {
+                                const target = parseInt(stat.dataset.target, 10);
+                                animateStatNumbers(stat, target);
+                            });
+                        }
+                        
+                        section.dataset.animated = "true";
+                    }
+                } else {
+                    hideMascot(provinceId);
+                }
+            });
+        }, { threshold: 0.5 });
+        observer.observe(section);
+    });
+});
+</script>
+</body>
+</html>
