@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Hành Trình Của Rồng Con - Khám Phá Miền Tây</title>
+	<title>Viettote</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,33 +58,65 @@
 
 		/* Intro */
 		#landing { 
-			height: 100vh; 
-			display: flex; 
-			flex-direction: column; 
-			align-items: center; 
-			justify-content: center; 
-			text-align: center; 
-			position: relative; 
-			background-color: var(--dark-background); 
-			z-index: 10; 
+  
+    height: 100vh; 
+    width: 100vw;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center; 
+    position: relative; 
+    overflow: hidden;
+
+    background:
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+        url("bglanding.png");
+    background-size: cover;              /* Ảnh phủ toàn màn hình, không kéo méo */
+    background-position:  center 90%;
+;  /* Giữ phần giữa ảnh */
+    background-repeat: no-repeat;
+    background-attachment: fixed;        /* Giúp hiệu ứng parallax nhẹ trên desktop */
+    z-index: 10;
+}
+#landing h1, 
+#landing h2, 
+#landing p { 
+    color: #ffffff; 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+#landing .text-lg { 
+    color: var(--background-color); 
+    opacity: 0.8; 
+}
+
+#landing .text-2xl { 
+    color: var(--background-color); 
+}
+
+#landing .scroll-down-arrow { 
+    color: var(--background-color); 
+    opacity: 0.6;
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounceArrow 2s infinite;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.landing-logo-brand, 
+.landing-content > img, 
+.landing-content > h1, 
+.landing-content > p, 
+.scroll-down-arrow { 
+    opacity: 0; 
+    animation-fill-mode: forwards; 
+    animation-timing-function: ease-out;
+
 		}
-		#landing h1, #landing h2, #landing p { color: var(--background-color); }
-		#landing .text-lg { color: var(--background-color); opacity: 0.8; }
-		#landing .text-2xl { color: var(--background-color); }
-		#landing .scroll-down-arrow { 
-			color: var(--background-color); 
-			opacity: 0.6;
-			position: absolute;
-			bottom: 2rem;
-			left: 50%;
-			transform: translateX(-50%);
-			animation: bounceArrow 2s infinite;
-		}
-		.landing-logo-brand, .landing-content > img, .landing-content > h1, .landing-content > p, .scroll-down-arrow { 
-			opacity: 0; 
-			animation-fill-mode: forwards; 
-			animation-timing-function: ease-out; 
-		}
+		
 		.landing-logo-brand { animation: fadeIn 1.2s 0.5s forwards; }
 		.landing-content > img { animation: popIn 0.8s 1.0s forwards; }
 		.landing-content > h1 { animation: fadeIn 1.2s 1.8s forwards; }
@@ -98,6 +130,27 @@
 			margin: 0 auto; 
 			padding: 6rem 1rem; 
 		}
+		.landing-logo-brand {
+  position: relative;
+  display: inline-block;
+  z-index: 10;
+}
+
+/* Nền vuông trắng bo tròn phía sau logo */
+.landing-logo-brand::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 35%;  /* to hơn logo khoảng 20% */
+  height: 65%;
+  background: #ffffff; /* màu trắng */
+  border-radius: 20px; /* bo góc */
+  transform: translate(-50%, -50%);
+  z-index: -1; /* nằm dưới logo */
+   /* bóng nhẹ để tách nền */
+}
+
 
 		/* Path SVG */
 		#timeline-drawing-path-container {
@@ -618,6 +671,14 @@
 				font-size: 0.8rem;
 			}
 		}
+		@keyframes dialogJumpEffect {
+	0% { transform: translateY(-10px) scale(1); }
+	50% { transform: translateY(-20px) scale(1.05); } /* Nhảy lên cao hơn chút và phình to ra */
+	100% { transform: translateY(-10px) scale(1); }
+}
+.dialog-jump {
+	animation: dialogJumpEffect 0.4s ease-out;
+}
 	</style>
 </head>
 <body>
@@ -625,14 +686,14 @@
 <section id="landing">
 	<div class="landing-content">
 		<div class="landing-logo-brand mb-8 flex flex-col items-center">
-			<img src="eveREst Logo-03.png" alt="Logo" class="w-24 h-24">
-			<h2 class="text-2xl font-bold mt-2">Team eveREst</h2>
+		<img src="logo mới.png" alt="Logo" class="w-[150px] h-[150px]">
+			<h2 class="text-2xl font-bold mt-2"></h2>
 		</div>
-		<img src="LittleDragon.png" alt="Mascot Rồng Con Tò Te" class="w-56 h-56 sm:w-64 sm:h-64 mx-auto">
+		<img src="LittleDragon.png" alt="Mascot Rồng Con Tò Te" class="w-56 h-56 sm:w-64 sm:h-64 mx-auto -mt-6 ">
 		<h1 class="text-3xl sm:text-4xl font-bold mt-6 max-w-2xl mx-auto px-4">
-			Khám Phá Miền Tây Cùng Rồng Con
+			Mang Tòte Khắp Việt Nam
 		</h1>
-		<p class="text-lg text-gray-600 mt-4">Cùng tớ chu du qua những miền đất hứa nhé!</p>
+		<p class="text-lg text-gray-600 mt-4">Cùng Rồng con chu du qua những miền đất hứa nhé!</p>
 	</div>
 	<div class="scroll-down-arrow">
 		<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -727,23 +788,43 @@
 window.addEventListener('load', () => {
 	// Mascot Data
 	const provinceData = {
-		soctrang: { 
-			position: 'left', 
-			mascotImage: 'LittleDragon.png', 
-			dialog: ["Aha, mình đến Sóc Trăng rồi!", "Nơi đây nổi tiếng với chùa Khmer đẹp lắm!"] 
+		soctrang: {
+			position: 'left',
+			mascotImage: 'LittleDragon.png',
+			dialog: [
+				"Aha, mình đến Sóc Trăng rồi! Vùng đất của những ngôi chùa Khmer rực rỡ.",
+				"Các bạn nhất định phải thử bánh Pía sầu riêng thơm lừng đặc sản nơi đây nhé!",
+				"Nếu đến đúng dịp lễ hội Oóc Om Bóc, tụi mình sẽ được xem đua ghe Ngo cực sôi động!",
+				"Người dân Sóc Trăng hiền hòa, mến khách lắm đó nha.",
+				"Ở đây còn có Bún nước lèo ngon 'nhức nách' luôn, nhớ thử nha!",
+				"Nào, cùng tớ đi tiếp xuống vùng đất tiếp theo thôi!"
+			]
 		},
-		haugiang: { 
-			position: 'right', 
-			mascotImage: 'Artboard 1.png', 
-			dialog: ["Tới Hậu Giang rồi!", "Quê hương trái cây ngọt ngào nhất miền Tây!"] 
+		haugiang: {
+			position: 'right',
+			mascotImage: 'Artboard 1.png',
+			dialog: [
+				"Xin chào Hậu Giang! Tớ nghe nói đây là 'vựa lúa', 'vựa trái cây' trù phú lắm.",
+				"Đặc sản nổi tiếng nhất ở đây là chả cá thát lát cườm, dai ngon cực kỳ!",
+				"Đừng quên ghé thăm những cánh đồng Khóm (dứa) Cầu Đúc bạt ngàn nhé, ngọt lắm đó.",
+				"Chợ nổi Ngã Bảy - Phụng Hiệp từng đi vào bài hát nổi tiếng, nhộn nhịp vô cùng.",
+				"Con người Hậu Giang chân chất, thật thà và hào sảng đúng chất miền Tây.",
+				"Cảnh sông nước ở đây yên bình quá, tớ muốn ở lại đây mãi thôi!"
+			]
 		},
-		cantho: { 
-			position: 'left', 
-			mascotImage: 'LittleDragon.png', 
-			dialog: ["Chào mừng đến Cần Thơ!", "Chợ nổi Cái Răng buổi sáng rất đông vui!"] 
+		cantho: {
+			position: 'left',
+			mascotImage: 'LittleDragon.png',
+			dialog: [
+				"Tèn ten! 'Cần Thơ gạo trắng nước trong - Ai đi đến đó lòng không muốn về'.",
+				"Sáng sớm tụi mình phải đi Chợ nổi Cái Răng ăn tô hủ tiếu lắc trên ghe mới đúng điệu!",
+				"Tối đến thì ra bến Ninh Kiều đi dạo, ngắm cầu đi bộ lung linh đẹp lắm.",
+				"Về Cần Thơ là phải ghé các miệt vườn trái cây, mùa nào thức nấy, bao tươi ngon.",
+				"Các bạn nhớ thưởng thức món Lẩu mắm đậm đà hương vị sông nước miền Tây nhé.",
+				"Người Cần Thơ thanh lịch, nhẹ nhàng mà cũng rất hiện đại đó nha!"
+			]
 		}
 	};
-	
 	const mascotContainer = document.getElementById('mascot-container');
 	const mascotImage = document.getElementById('mascot-img');
 	const dialogBox = document.getElementById('dialog-box');
@@ -751,29 +832,49 @@ window.addEventListener('load', () => {
 	let dialogInterval;
 	let activeProvince = null;
 
+let sentenceIndex = 0; // Đưa biến này ra ngoài để quản lý chung
+
 	function showMascot(provinceId) {
 		if (activeProvince === provinceId) return;
 		activeProvince = provinceId;
 		const data = provinceData[provinceId];
 		if (!data) return;
+
 		mascotContainer.className = `position-${data.position}`;
 		mascotImage.src = data.mascotImage || 'LittleDragon.png';
+		
+		// Reset index về 0 mỗi khi mascot mới xuất hiện
+		sentenceIndex = 0;
+		dialogText.textContent = data.dialog[sentenceIndex]; // Đặt trước câu đầu tiên
+
+		// Hiện mascot và hộp thoại
 		setTimeout(() => {
 			mascotContainer.classList.add('visible');
 			dialogBox.className = `visible dialog-from-${data.position}`;
+			// KHÔNG thêm class 'dialog-jump' ở đây để tránh giật câu đầu
 		}, 50);
-		let sentenceIndex = 0;
+
+		// Bắt đầu đếm ngược để nhảy sang câu thứ 2
+		sentenceIndex = 1; // Chuẩn bị sẵn cho câu tiếp theo
 		clearInterval(dialogInterval);
-		const showNextSentence = () => {
-			dialogBox.classList.remove('visible'); 
-			void dialogBox.offsetWidth;
-			dialogBox.classList.add('visible'); 
-			dialogText.textContent = data.dialog[sentenceIndex];
-			sentenceIndex = (sentenceIndex + 1) % data.dialog.length;
-		};
-		setTimeout(showNextSentence, 900);
-		dialogInterval = setInterval(showNextSentence, 4900);
+		dialogInterval = setInterval(showNextSentence, 5000); // Tăng thời gian lên 5s cho dễ đọc
 	}
+
+	const showNextSentence = () => {
+		const data = provinceData[activeProvince];
+		if (!data) return;
+
+		// Cập nhật nội dung
+		dialogText.textContent = data.dialog[sentenceIndex];
+		
+		// Kích hoạt hiệu ứng nhảy (chỉ từ câu thứ 2 trở đi)
+		dialogBox.classList.remove('dialog-jump');
+		void dialogBox.offsetWidth;
+		dialogBox.classList.add('dialog-jump');
+
+		// Tăng index vòng lặp
+		sentenceIndex = (sentenceIndex + 1) % data.dialog.length;
+	};
 	
 	function hideMascot(provinceId) {
 		if (activeProvince === provinceId) {
